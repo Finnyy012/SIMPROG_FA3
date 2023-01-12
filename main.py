@@ -316,103 +316,104 @@ def approval(n_jaar, n_stem, n_partij):
 
 
 
-n_year = 5
-n_stem = 1000
-parties = 3
-runs = 100
-
-p1 = np.arange(n_year)
-p2 = np.arange(n_year)
-p3 = np.arange(n_year)
-
-for j in range(runs):
-    newmodel = KiesModel(n_stem, parties, 'p')
-    for i in range(n_year):
-        newmodel.step()
-        list1 = newmodel.data['vote'].value_counts()
-        p1[i] += (list1.iloc[0])/n_stem*100
-        p2[i] += (list1.iloc[1])/n_stem*100
-        if(len(list1)==3):
-            p3[i] += (list1.iloc[2])/n_stem*100
-    p1 = p1/runs
-    p2 = p2/runs
-    p3 = p3/runs
-    print(j)
-
-
-labels = list(np.arange(n_year))
-
-x = np.arange(len(labels))
-width = 0.25
-
-fig, ax = plt.subplots()
-rects1 = ax.bar(x - width, p1, width, label='partij 1')
-rects2 = ax.bar(x,         p2, width, label='partij 2')
-rects3 = ax.bar(x + width, p3, width, label='partij 3')
-
-ax.set_xlabel('n election')
-ax.set_ylabel('% of votes')
-ax.set_xticks(x, labels)
-ax.legend()
-
-fig.tight_layout()
-
-plt.show()
-
-
-# runs = 1000
-# voters = 1000
-# parties = 6
+# n_year = 5
+# n_stem = 1000
+# parties = 3
+# runs = 100
 #
-# y_a = []
-# for i in range(2,parties):
-#     n = 0
-#     for j in range(runs):
-#         res = approval(0, voters, i)
-#         if(res[0] == res[1]):
-#             n+=1
-#     print((n/runs) * 100)
-#     y_a.append((n/runs) * 100)
-# print('a')
+# p1 = np.arange(n_year)
+# p2 = np.arange(n_year)
+# p3 = np.arange(n_year)
 #
-# y_p = []
-# for i in range(2,parties):
-#     n = 0
-#     for j in range(runs):
-#         res = plurality(0, voters, i)
-#         if(res[0] == res[1]):
-#             n+=1
-#     print((n/runs) * 100)
-#     y_p.append((n/runs) * 100)
-# print('p')
+# for j in range(runs):
+#     newmodel = KiesModel(n_stem, parties, 'p')
+#     for i in range(n_year):
+#         newmodel.step()
+#         list1 = newmodel.data['vote'].value_counts()
+#         p1[i] += (list1.iloc[0])/n_stem*100
+#         p2[i] += (list1.iloc[1])/n_stem*100
+#         if(len(list1)==3):
+#             p3[i] += (list1.iloc[2])/n_stem*100
+#     p1 = p1/runs
+#     p2 = p2/runs
+#     p3 = p3/runs
+#     print(j)
 #
-# y_r = []
-# for i in range(2,parties):
-#     n = 0
-#     for j in range(runs):
-#         res = instant_runoff(0, voters, i)
-#         if(res[0] == res[1]):
-#             n+=1
-#     print((n/runs) * 100)
-#     y_r.append((n/runs) * 100)
-# print('r')
 #
-# labels = list(np.arange(parties))[2:]
+# labels = list(np.arange(n_year))
 #
 # x = np.arange(len(labels))
 # width = 0.25
 #
 # fig, ax = plt.subplots()
-# rects1 = ax.bar(x - width, y_p, width, label='plurality')
-# rects2 = ax.bar(x,         y_r, width, label='instant runoff')
-# rects3 = ax.bar(x + width, y_a, width, label='approval')
+# rects1 = ax.bar(x - width, p1, width, label='partij 1')
+# rects2 = ax.bar(x,         p2, width, label='partij 2')
+# rects3 = ax.bar(x + width, p3, width, label='partij 3')
 #
-# ax.set_xlabel('n parties')
-# ax.set_ylabel('% of elections resulting in condorcet winner')
+# ax.set_xlabel('n election')
+# ax.set_ylabel('% of votes')
 # ax.set_xticks(x, labels)
 # ax.legend()
 #
 # fig.tight_layout()
 #
 # plt.show()
+
+
+runs = 1000
+voters = 1000
+parties = 6
+
+y_a = []
+for i in range(3,parties):
+    n = 0
+    for j in range(runs):
+        res = approval(5, voters, i)
+        if(res[0] == res[1]):
+            n+=1
+    print((n/runs) * 100)
+    y_a.append((n/runs) * 100)
+print('a')
+
+y_p = []
+for i in range(3,parties):
+    print(i)
+    n = 0
+    for j in range(runs):
+        res = plurality(5, voters, i)
+        if(res[0] == res[1]):
+            n+=1
+    print((n/runs) * 100)
+    y_p.append((n/runs) * 100)
+print('p')
+
+y_r = []
+for i in range(3,parties):
+    n = 0
+    for j in range(runs):
+        res = instant_runoff(0, voters, i)
+        if(res[0] == res[1]):
+            n+=1
+    print((n/runs) * 100)
+    y_r.append((n/runs) * 100)
+print('r')
+
+labels = list(np.arange(parties))[3:]
+
+x = np.arange(len(labels))
+width = 0.25
+
+fig, ax = plt.subplots()
+rects1 = ax.bar(x - width, y_p, width, label='plurality')
+rects2 = ax.bar(x,         y_r, width, label='instant runoff')
+rects3 = ax.bar(x + width, y_a, width, label='approval')
+
+ax.set_xlabel('n parties')
+ax.set_ylabel('% of elections resulting in condorcet winner')
+ax.set_xticks(x, labels)
+ax.legend()
+
+fig.tight_layout()
+
+plt.show()
 
