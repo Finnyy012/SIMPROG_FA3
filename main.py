@@ -314,8 +314,50 @@ def approval(n_jaar, n_stem, n_partij):
 # approval_printres(5, 10000, 5)
 # plurality_printres(5, 10000, 5)
 
-l = []
-for i in range(5):
+
+
+n_year = 5
+n_stem = 1000
+parties = 3
+runs = 100
+
+p1 = np.arange(n_year)
+p2 = np.arange(n_year)
+p3 = np.arange(n_year)
+
+for j in range(runs):
+    newmodel = KiesModel(n_stem, parties, 'p')
+    for i in range(n_year):
+        newmodel.step()
+        list1 = newmodel.data['vote'].value_counts()
+        p1[i] += (list1.iloc[0])/n_stem*100
+        p2[i] += (list1.iloc[1])/n_stem*100
+        if(len(list1)==3):
+            p3[i] += (list1.iloc[2])/n_stem*100
+    p1 = p1/runs
+    p2 = p2/runs
+    p3 = p3/runs
+    print(j)
+
+
+labels = list(np.arange(n_year))
+
+x = np.arange(len(labels))
+width = 0.25
+
+fig, ax = plt.subplots()
+rects1 = ax.bar(x - width, p1, width, label='partij 1')
+rects2 = ax.bar(x,         p2, width, label='partij 2')
+rects3 = ax.bar(x + width, p3, width, label='partij 3')
+
+ax.set_xlabel('n election')
+ax.set_ylabel('% of votes')
+ax.set_xticks(x, labels)
+ax.legend()
+
+fig.tight_layout()
+
+plt.show()
 
 
 # runs = 1000
