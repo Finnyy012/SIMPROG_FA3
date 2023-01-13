@@ -191,7 +191,7 @@ class KiesModel(mesa.Model):
         df = pd.DataFrame(np.vstack(self.data['vote']))
 
         for i in range(len(self.partijen)-1):
-            # print(df[len(self.partijen) - 1].value_counts())
+            print(df[len(self.partijen) - 1].value_counts())
             if df[len(self.partijen)-1].value_counts().iloc[0] >= (self.num_agents/2):
                 return df[len(self.partijen)-1].value_counts().index[0]
             else:
@@ -200,7 +200,7 @@ class KiesModel(mesa.Model):
                 df.replace(to_replace=verliezer, value=-1, inplace=True)
                 df = df.apply(lambda a: shift_row(a), axis=1).astype('Int64')
 
-        # print(df[len(self.partijen) - 1].value_counts())
+        print(df[len(self.partijen) - 1].value_counts())
         # print('tiee')
         return -1
 
@@ -268,7 +268,28 @@ def plurality_printres(n_jaar, n_stem, n_partij):
 def approval_printres(n_jaar, n_stem, n_partij):
     newmodel = KiesModel(n_stem, n_partij, 'a')
     newmodel.step()
-    df = newmodel.data
+    # df = newmodel.data
+    print('partijen: ')
+    for i in newmodel.partijen:
+        print('\t' + str(i))
+    print('\nn stemmers: \t\t' + str(newmodel.num_agents))
+    print('condorcet winnaar:\t' + str(newmodel.condorcet()))
+    print('winnaar:\t\t\t' + str(newmodel.winnaar))
+    s = pd.Series(np.hstack(newmodel.data['vote']))
+    print('stemmen:\n' + str(s.value_counts()))
+
+    for i in range(n_jaar):
+        newmodel.step()
+        print('winnaar:\t\t\t' + str(newmodel.winnaar))
+        s = pd.Series(np.hstack(newmodel.data['vote']))
+        print('stemmen:\n' + str(s.value_counts()))
+
+    return (newmodel.winnaar, newmodel.condorcet())
+
+def runoff_printres(n_jaar, n_stem, n_partij):
+    newmodel = KiesModel(n_stem, n_partij, 'r')
+    newmodel.step()
+    # df = newmodel.data
     print('partijen: ')
     for i in newmodel.partijen:
         print('\t' + str(i))
@@ -313,7 +334,7 @@ def approval(n_jaar, n_stem, n_partij):
 
 # approval_printres(5, 10000, 5)
 # plurality_printres(5, 10000, 5)
-
+runoff_printres(0, 100000, 5)
 
 
 # n_year = 5
@@ -360,60 +381,60 @@ def approval(n_jaar, n_stem, n_partij):
 # plt.show()
 
 
-runs = 1000
-voters = 1000
-parties = 6
+# runs = 1000
+# voters = 1000
+# parties = 6
+#
+# y_a = []
+# for i in range(3,parties):
+#     n = 0
+#     for j in range(runs):
+#         res = approval(5, voters, i)
+#         if(res[0] == res[1]):
+#             n+=1
+#     print((n/runs) * 100)
+#     y_a.append((n/runs) * 100)
+# print(y_a)
 
-y_a = []
-for i in range(3,parties):
-    n = 0
-    for j in range(runs):
-        res = approval(5, voters, i)
-        if(res[0] == res[1]):
-            n+=1
-    print((n/runs) * 100)
-    y_a.append((n/runs) * 100)
-print('a')
+# y_p = []
+# for i in range(3,parties):
+#     print(i)
+#     n = 0
+#     for j in range(runs):
+#         res = plurality(5, voters, i)
+#         if(res[0] == res[1]):
+#             n+=1
+#     print((n/runs) * 100)
+#     y_p.append((n/runs) * 100)
+# print('p')
+#
+# y_r = []
+# for i in range(3,parties):
+#     n = 0
+#     for j in range(runs):
+#         res = instant_runoff(0, voters, i)
+#         if(res[0] == res[1]):
+#             n+=1
+#     print((n/runs) * 100)
+#     y_r.append((n/runs) * 100)
+# print('r')
 
-y_p = []
-for i in range(3,parties):
-    print(i)
-    n = 0
-    for j in range(runs):
-        res = plurality(5, voters, i)
-        if(res[0] == res[1]):
-            n+=1
-    print((n/runs) * 100)
-    y_p.append((n/runs) * 100)
-print('p')
-
-y_r = []
-for i in range(3,parties):
-    n = 0
-    for j in range(runs):
-        res = instant_runoff(0, voters, i)
-        if(res[0] == res[1]):
-            n+=1
-    print((n/runs) * 100)
-    y_r.append((n/runs) * 100)
-print('r')
-
-labels = list(np.arange(parties))[3:]
-
-x = np.arange(len(labels))
-width = 0.25
-
-fig, ax = plt.subplots()
-rects1 = ax.bar(x - width, y_p, width, label='plurality')
-rects2 = ax.bar(x,         y_r, width, label='instant runoff')
-rects3 = ax.bar(x + width, y_a, width, label='approval')
-
-ax.set_xlabel('n parties')
-ax.set_ylabel('% of elections resulting in condorcet winner')
-ax.set_xticks(x, labels)
-ax.legend()
-
-fig.tight_layout()
-
-plt.show()
+# labels = list(np.arange(parties))[3:]
+#
+# x = np.arange(len(labels))
+# width = 0.25
+#
+# fig, ax = plt.subplots()
+# rects1 = ax.bar(x - width, y_p, width, label='plurality')
+# rects2 = ax.bar(x,         y_r, width, label='instant runoff')
+# rects3 = ax.bar(x + width, y_a, width, label='approval')
+#
+# ax.set_xlabel('n parties')
+# ax.set_ylabel('% of elections resulting in condorcet winner')
+# ax.set_xticks(x, labels)
+# ax.legend()
+#
+# fig.tight_layout()
+#
+# plt.show()
 
